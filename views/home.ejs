@@ -1,20 +1,64 @@
 <section class="hero" role="banner">
   <h1>Discover Puerto Rico Deals</h1>
-  <p>Curated getaways, surf spots & cultural escapes.</p>
-  <a class="btn" href="/signup">Get Early Access</a>
+  <p class="hero-lede">Sun-soaked steals, island-wide.</p>
+  <div class="cats" aria-label="Categories">
+    <a class="pill" href="/?category=hotel">🏨 Hotels</a>
+    <a class="pill" href="/?category=restaurant">🍽️ Dining</a>
+    <a class="pill" href="/?category=experience">🌊 Experiences</a>
+    <a class="pill" href="/?category=flight">✈️ Flights</a>
+  </div>
+  <div class="ticker" aria-live="polite">✨ <%= newDealsCount %> new deals today • Last updated <%= updatedAt %></div>
+  <div style="margin-top:1rem;">
+    <a class="btn" href="/signup">Get Early Access</a>
+  </div>
 </section>
+
+<% if (featuredDeal) { %>
+<section class="spotlight" aria-label="Spotlight deal">
+  <div style="position:relative;">
+    <img src="<%= featuredDeal.image_url %>" alt="<%= featuredDeal.title %>">
+    <% if (featuredDeal.discount_percent) { %>
+      <span class="sticker">🎟 -<%= featuredDeal.discount_percent %>%</span>
+    <% } %>
+  </div>
+  <div class="spotlight-body">
+    <h2 style="margin-top:0; font-size:1.6rem; line-height:1.15;">
+      <span aria-hidden="true" class="emoji-pill"><%= featuredDeal.category_emoji %></span>
+      <%= featuredDeal.title %>
+    </h2>
+    <% if (featuredDeal.teaser) { %><p><%= featuredDeal.teaser %></p><% } %>
+    <p style="font-size:0.85rem; margin:.6rem 0 1rem;">
+      <% if (featuredDeal.from_price_cents != null) { %>
+        <span class="price-now">Now $<%= (featuredDeal.from_price_cents/100).toFixed(2) %></span>
+      <% } %>
+      <% if (featuredDeal.list_price_cents && featuredDeal.from_price_cents && featuredDeal.list_price_cents>featuredDeal.from_price_cents) { %>
+        <span class="price-was">Was $<%= (featuredDeal.list_price_cents/100).toFixed(2) %></span>
+        <span class="pill off">-<%= featuredDeal.discount_percent %>%</span>
+      <% } %>
+    </p>
+    <p>
+      <a class="btn" href="/deal/<%= encodeURIComponent(featuredDeal.slug) %>">View deal</a>
+      <a href="#" style="font-size:.7rem; margin-left:.75rem; text-decoration:underline;">💙 Save to list</a>
+    </p>
+  </div>
+</section>
+<% } %>
+
 <section class="grid" aria-label="Deals list">
   <% if (deals && deals.length) { %>
     <% deals.forEach(d => { %>
       <a class="card" href="/deal/<%= encodeURIComponent(d.slug) %>">
         <img src="<%= d.image_url %>" alt="<%= d.title %>" />
         <% if (d.badge_text) { %><span class="badge"><%= d.badge_text %></span><% } %>
-        <h3><%= d.title %></h3>
+        <h3><span aria-hidden="true" class="emoji-pill"><%= d.category_emoji %></span><%= d.title %></h3>
         <% if (d.merchant_name) { %><p class="merchant"><%= d.merchant_name %></p><% } %>
         <% if (d.from_price_cents != null) { %>
           <p class="price">
-            From $<%= (d.from_price_cents/100).toFixed(2) %>
-            <% if (d.discount_percent) { %><span class="discount">-<%= d.discount_percent %>%</span><% } %>
+            <span class="price-now">$<%= (d.from_price_cents/100).toFixed(2) %></span>
+            <% if (d.list_price_cents && d.list_price_cents > d.from_price_cents) { %>
+              <span class="price-was">$<%= (d.list_price_cents/100).toFixed(2) %></span>
+              <span class="pill off">-<%= d.discount_percent %>%</span>
+            <% } %>
           </p>
         <% } %>
         <% if (d.rating_avg) { %><p class="rating">⭐ <%= d.rating_avg.toFixed(1) %><span class="rcount">(<%= d.rating_count || 0 %>)</span></p><% } %>

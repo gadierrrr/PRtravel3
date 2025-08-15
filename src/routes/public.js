@@ -23,23 +23,31 @@ router.get('/', async (req, res, next) => {
       GROUP BY d.id
       ORDER BY COALESCE(d.featured_rank, 9999), d.created_at DESC
     `, params);
-    const deals = rows.map(r => ({
-      slug: r.slug,
-      title: r.title,
-      teaser: r.teaser,
-      category: r.category,
-      image_url: r.image_url || '/img/placeholder.jpg',
-      from_price_cents: r.from_price_cents,
-      list_price_cents: r.list_price_cents,
-      merchant_name: r.merchant_name,
-      badge_text: r.badge_text,
-      rating_avg: r.rating_avg,
-      rating_count: r.rating_count,
-      ends_at: r.ends_at,
-      discount_percent: (r.list_price_cents && r.from_price_cents && r.list_price_cents > r.from_price_cents)
-        ? Math.round((1 - (r.from_price_cents / r.list_price_cents)) * 100) : null
-    }));
-    res.render('home', { title: 'Puerto Rico Travel Deals', deals, currentCategory: category });
+    const CAT_EMOJI = { hotel: '🏨', restaurant: '🍽️', experience: '🌊', flight: '✈️' };
+    const deals = rows.map(r => {
+      const discount_percent = (r.list_price_cents && r.from_price_cents && r.list_price_cents > r.from_price_cents)
+        ? Math.round((1 - (r.from_price_cents / r.list_price_cents)) * 100) : null;
+      return {
+        slug: r.slug,
+        title: r.title,
+        teaser: r.teaser,
+        category: r.category,
+        category_emoji: CAT_EMOJI[r.category] || '',
+        image_url: r.image_url || '/img/placeholder.jpg',
+        from_price_cents: r.from_price_cents,
+        list_price_cents: r.list_price_cents,
+        merchant_name: r.merchant_name,
+        badge_text: r.badge_text,
+        rating_avg: r.rating_avg,
+        rating_count: r.rating_count,
+        ends_at: r.ends_at,
+        discount_percent
+      };
+    });
+    const featuredDeal = deals[0] || null;
+    const updatedAt = new Date().toLocaleTimeString();
+    const newDealsCount = deals.length; // simple placeholder
+    res.render('home', { title: 'Puerto Rico Travel Deals', deals, featuredDeal, updatedAt, newDealsCount, currentCategory: category });
   } catch (err) { next(err); }
 });
 
