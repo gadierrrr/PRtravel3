@@ -1,0 +1,20 @@
+<header class="site-header">
+  <div class="branding"><a href="/" style="color:#fff;text-decoration:none;">PRTD</a></div>
+  <nav class="nav-cats">
+    <a href="/" class="<%= !currentCategory ? 'active' : '' %>">All</a>
+    <a href="/?category=hotel" class="<%= currentCategory==='hotel' ? 'active' : '' %>">Hotels</a>
+    <a href="/?category=restaurant" class="<%= currentCategory==='restaurant' ? 'active' : '' %>">Food</a>
+    <a href="/?category=experience" class="<%= currentCategory==='experience' ? 'active' : '' %>">Experiences</a>
+    <span class="spacer"></span>
+      <% if (user) { %>
+        <a href="/account">Account</a>
+        <form method="post" action="/logout" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit">Logout</button>
+        </form>
+      <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/signup" class="cta">Sign Up</a>
+      <% } %>
+  </nav>
+</header>

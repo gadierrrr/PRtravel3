@@ -1,0 +1,37 @@
+<h2>Admin Dashboard</h2>
+<div style="display:flex; gap:1rem; align-items:center;">
+	<form method="post" action="/admin/logout" style="margin:0;">
+		<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+		<button type="submit">Logout</button>
+	</form>
+	<a class="btn" href="/admin/deals/new">New Deal</a>
+</div>
+
+<table class="admin-table" style="margin-top:1rem;">
+	<thead>
+		<tr>
+			<th>ID</th><th>Title</th><th>Category</th><th>From Price</th><th>Active</th><th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% (deals||[]).forEach(d => { %>
+			<tr>
+				<td><%= d.id %></td>
+				<td><%= d.title %></td>
+				<td><%= d.category %></td>
+				<td><% if (d.from_price_cents != null) { %>$<%= (d.from_price_cents/100).toFixed(2) %><% } else { %>-<% } %></td>
+				<td><%= d.is_active ? 'Yes' : 'No' %></td>
+				<td style="display:flex; gap:.5rem;">
+					<a href="/admin/deals/<%= d.id %>/edit">Edit</a>
+					<form method="post" action="/admin/deals/<%= d.id %>/toggle" style="margin:0;">
+						<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+						<button type="submit"><%= d.is_active ? 'Archive' : 'Unarchive' %></button>
+					</form>
+				</td>
+			</tr>
+		<% }) %>
+		<% if(!deals || !deals.length){ %>
+			<tr><td colspan="6">No deals.</td></tr>
+		<% } %>
+	</tbody>
+</table>

@@ -1,0 +1,46 @@
+<div class="admin-form">
+<% if (adminLogin) { %>
+  <h2>Admin Login</h2>
+  <% if (error) { %><p style="color:#b00"><%= error %></p><% } %>
+  <form method="post" action="/admin/login">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label>Password <input type="password" name="password" required></label>
+    <button class="btn" type="submit">Login</button>
+  </form>
+<% } else { %>
+  <h2><%= deal ? 'Edit Deal' : 'New Deal' %></h2>
+  <% if (error) { %><p style="color:#b00"><%= error %></p><% } %>
+  <form method="post" enctype="multipart/form-data" action="<%= deal ? '/admin/deals/' + deal.id : '/admin/deals' %>">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label>Title <input type="text" name="title" value="<%= deal ? deal.title : '' %>" required></label>
+  <label>Merchant Name <input type="text" name="merchant_name" value="<%= deal ? (deal.merchant_name||'') : '' %>"></label>
+  <% if (deal && deal.image_url) { %>
+    <div class="img-preview"><p style="font-size:0.75rem;margin:0 0 .25rem;">Current Image</p><img class="admin-thumb" src="<%= deal.image_url %>" alt="current image"></div>
+  <% } %>
+  <label>Image URL <input type="text" name="image_url" value="<%= deal ? (deal.image_url||'') : '' %>"></label>
+  <label>Upload New Image <input type="file" name="image_file" accept="image/png,image/jpeg,image/webp"></label>
+  <label style="display:flex;align-items:center;gap:.4rem;font-weight:400;font-size:0.7rem;"><input type="checkbox" name="remove_image" value="1"> Remove image</label>
+  <p style="margin:.3rem 0 1rem;font-size:0.65rem;opacity:.8;">If you upload a file, it overrides Image URL on save. Allowed: JPG, PNG, WEBP up to 2MB.</p>
+    <label>Category
+      <select name="category" required>
+        <option value="">--</option>
+        <% ['hotel','restaurant','experience'].forEach(c => { %>
+          <option value="<%= c %>" <%= deal && deal.category===c ? 'selected' : '' %>><%= c %></option>
+        <% }) %>
+      </select>
+    </label>
+  <label>Teaser <input type="text" name="teaser" value="<%= deal ? (deal.teaser||'') : '' %>"></label>
+  <label>Badge Text <input type="text" name="badge_text" value="<%= deal ? (deal.badge_text||'') : '' %>"></label>
+  <label>Promo Code <input type="text" name="promo_code" value="<%= deal ? (deal.promo_code||'') : '' %>"></label>
+  <label>Promo Note <input type="text" name="promo_note" value="<%= deal ? (deal.promo_note||'') : '' %>"></label>
+  <label>Rating Avg <input type="number" step="0.1" name="rating_avg" value="<%= deal && deal.rating_avg || '' %>"></label>
+  <label>Rating Count <input type="number" name="rating_count" value="<%= deal && deal.rating_count || '' %>"></label>
+  <label>List Price (cents) <input type="number" name="list_price_cents" value="<%= deal && deal.list_price_cents || '' %>"></label>
+  <label>Ends At (ISO) <input type="text" name="ends_at" value="<%= deal && deal.ends_at || '' %>"></label>
+    <label>Option Price (cents) <input type="number" name="price_cents" value="<%= option && option.price_cents || '' %>"></label>
+    <label><input type="checkbox" name="active" value="1" <%= !deal || deal.is_active ? 'checked' : '' %>> Active</label>
+    <button class="btn" type="submit">Save</button>
+    <a href="/admin">Cancel</a>
+  </form>
+<% } %>
+</div>

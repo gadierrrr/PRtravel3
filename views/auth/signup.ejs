@@ -1,0 +1,14 @@
+<h2>Create Account</h2>
+<% if (typeof error !== 'undefined' && error) { %>
+  <p style="color:#b00"><%= error %></p>
+<% } %>
+<form method="post" action="/signup">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <label>Email <input type="email" name="email" required></label>
+  <label>Password <input type="password" name="password" required></label>
+  <button class="btn" type="submit">Sign Up</button>
+</form>
+
+<div style="margin-top:1rem">
+  <a class="btn" href="/auth/google" style="background:#4285F4">Continue with Google</a>
+</div>
