@@ -1,7 +1,0 @@
-<h2>My Account</h2>
-<p>Email: <%= user.email %></p>
-<p>Name: <%= user.name %></p>
-<form method="post" action="/logout">
-  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-  <button class="btn" type="submit">Logout</button>
-</form>

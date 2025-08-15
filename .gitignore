@@ -7,3 +7,19 @@ public/uploads/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# SQLite runtime databases (exclude generated binary DBs)
+db/*.sqlite
+
+# Accidental duplicate temp files (space + number) & common copy suffixes
+* 2.*
+* copy.*
+* copy *
+
+# Env variants
+*.env.local
+*.env.*.local
+
+# OS / Editor junk
+.DS_Store
+.vscode/
