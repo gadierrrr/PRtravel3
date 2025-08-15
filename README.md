@@ -1,9 +1,43 @@
 # PuertoRicoTravelDeals (PRTD)
 
-End-to-end prototype for a Puerto Rico travel deals marketplace.
+End-to-end prototype for a Puerto Rico travel deals marketplace focused on discoverability of curated Puerto Rico travel & experience deals, with admin curation, optional payment capture, and image management.
 
-## Stack
-Node 18+, Express, EJS + express-ejs-layouts, SQLite (embedded), Passport (local + Google), Sessions (connect-sqlite3), CSRF protection, Stripe Checkout (feature flagged), modern responsive CSS (single file, design tokens).
+## Tech Stack
+Node 18+ (ES modules not required, CommonJS), Express 4, EJS + express-ejs-layouts, SQLite (file-based) with light migration layer, Passport (Local + Google OAuth 2.0), connect-sqlite3 session store, CSRF protection, Stripe Checkout (feature flag), Multer for image uploads, single CSS file (design tokens + responsive grid), minimal dependency smoke tests.
+
+## Key Features
+- Public deal catalog with discount & time-left computations
+- Extended metadata: merchant name, average rating, rating count, promotional blurb, end date, review count placeholder
+- Image support: per-deal image via file upload (validated MIME/size) or external URL, with safe replacement & deletion
+- Authentication: email/password signup + Google OAuth (optional)
+- Admin portal (password gate) for CRUD deal management & image handling
+- Stripe Checkout integration (flagged off by default)
+- Idempotent migrations & seed scripts (safe re-run)
+- Security: CSRF on state-changing routes, bcrypt password hashing, session regeneration on auth events, rate limiting placeholder (can be added)
+- Clean design tokens & accessible focus states
+- Lightweight test harness (no Jest/Mocha dependency)
+
+## Architecture (High-Level)
+```
+Browser -> Express Router Layer -> Controllers (inline in routes) -> SQLite (serialized access)
+														 |-> Passport Strategies (local, Google)
+														 |-> Stripe Service (feature-flag)
+														 |-> Multer (upload parsing) -> /public/uploads
+Views: EJS templates with shared layout & partials
+```
+
+## Folder Structure
+```
+db/            Migration & seed scripts
+public/        Static assets (css/, uploads/ (gitignored))
+src/
+	server.js    App bootstrap (middleware, routes)
+	routes/      Route modules (public, auth, admin, stripe)
+	auth/        Passport strategy setup (local, Google)
+	lib/         Helpers (if added later)
+views/         EJS templates (layout, partials, pages)
+tests/         Smoke tests (HTTP requests)
+```
 
 ## Quick Start (≈5 minutes)
 1. Clone & install:
@@ -27,6 +61,12 @@ Node 18+, Express, EJS + express-ejs-layouts, SQLite (embedded), Passport (local
 	```
 6. Visit http://localhost:3000
 
+### Minimal Production-ish Run
+```bash
+NODE_ENV=production SESSION_SECRET="change_me" PORT=3000 npm start
+```
+Use a process manager (pm2 / systemd) & put SQLite file on persistent volume. Front with an HTTPS-terminating reverse proxy (nginx / Caddy). Set secure cookies & enable trust proxy.
+
 ## Environment Variables
 See `.env.example` for full list:
 
@@ -40,6 +80,7 @@ See `.env.example` for full list:
 | STRIPE_SECRET_KEY | Stripe secret API key (test) |
 | STRIPE_PUBLIC_KEY | (Future: client usage) |
 | STRIPE_WEBHOOK_SECRET | Verify incoming Stripe webhooks |
+| IMAGE_MAX_SIZE_MB | Override default 2MB upload cap (optional) |
 
 ## Auth
 - Local email/password signup & login
@@ -110,5 +151,46 @@ Use provided npm scripts. Avoid manual DB tampering outside scripts for repeatab
 ## License
 Internal prototype (add license if open-sourcing).
 
+## Image Upload Details
+- Implemented with Multer disk storage -> `public/uploads` (gitignored)
+- Max size default 2MB (tunable via `IMAGE_MAX_SIZE_MB`)
+- Accepts only JPG / PNG (content-type validation)
+- Replacing an image deletes the old file if it resides locally
+- Admin can also provide an absolute/remote URL instead of uploading
+
+## Security Notes
+- CSRF tokens on all POST/PUT/DELETE forms (middleware ordered so Multer runs before CSRF validation for multipart forms)
+- Passwords hashed with bcrypt (configurable rounds via code modification)
+- Session secret must be strong & unique in production; enable secure & httpOnly flags
+- Input validation: basic length / type checks; further hardening (rate limiting, helmet headers) recommended
+- Google OAuth uses email linking; ensure verified emails only (future enhancement)
+
+## Performance / Scalability
+SQLite is sufficient for prototype & low concurrency. For scale: migrate to Postgres, add connection pooling, move sessions to Redis, and introduce background job processing for async tasks (emails, image processing).
+
+## Versioning
+Semantic versioning starting at `v0.1.0` (prototype). Breaking schema changes will bump MINOR until a stable `1.0.0`.
+
+## Contributing
+1. Fork & branch: `feat/short-description`
+2. Run `npm run migrate && npm run seed`
+3. Add tests in `tests/`
+4. Ensure `npm test` passes & lint (if configured)
+5. Open PR with concise description & screenshots for UI changes
+
+## History Cleanup
+The initial commit accidentally included `node_modules/`. Subsequent commits removed it from tracking. If repository size becomes an issue, a history rewrite (already optionally performed via `git filter-repo`) removes those blobs. After rewriting, force push & notify collaborators to re-clone.
+
+## Future Hardening Ideas
+- CSP & security headers (helmet)
+- Structured logging (pino) + trace IDs
+- Rate limiting + account lockout policy
+- Queued email notifications (signup, order receipts)
+- Image CDN offload & responsive sizes
+- Full-text search / filtering
+
 ---
-Last updated: August 2025
+Last updated: August 2025 (expanded README)
+
+---
+<!-- Previous last updated marker retained above -->
