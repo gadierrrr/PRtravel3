@@ -90,6 +90,11 @@ app.use((err, req, res, next) => {
 });
 
 if (require.main === module) {
+  if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+    // eslint-disable-next-line no-console
+    console.error('FATAL: SESSION_SECRET is required in production. Set it and restart.');
+    process.exit(1);
+  }
   app.listen(PORT, () => {
     // eslint-disable-next-line no-console
     console.log(`Server listening on http://localhost:${PORT}`);
