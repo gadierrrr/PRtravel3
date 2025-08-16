@@ -1,6 +1,6 @@
-<header class="site-header">
-  <div class="branding"><a href="/" style="color:#fff;text-decoration:none;">PRTD</a></div>
-  <nav class="nav-cats">
+<header class="site-header" role="banner">
+  <div class="branding"><a href="/" style="color:#fff;text-decoration:none;"><span class="visually-hidden">Puerto Rico Travel Deals home</span><span aria-hidden="true">PRTD</span></a></div>
+  <nav class="nav-cats" aria-label="Primary">
     <a href="/" class="<%= !currentCategory ? 'active' : '' %>">All</a>
     <a href="/?category=hotel" class="<%= currentCategory==='hotel' ? 'active' : '' %>">Hotels</a>
     <a href="/?category=restaurant" class="<%= currentCategory==='restaurant' ? 'active' : '' %>">Food</a>
@@ -8,7 +8,7 @@
     <span class="spacer"></span>
       <% if (user) { %>
         <a href="/account">Account</a>
-        <form method="post" action="/logout" class="inline-form">
+  <form method="post" action="/logout" class="inline-form" aria-label="Logout">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button type="submit">Logout</button>
         </form>

@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title><%= title %></title>
+  <title><%= title %> – Puerto Rico Travel Deals</title>
+  <meta name="description" content="Curated Puerto Rico travel, dining and experience deals updated daily." />
+  <meta name="theme-color" content="#005067" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body class="<%= uiRefresh ? 'theme-refresh' : 'theme-legacy' %>">
+  <a href="#main-content" class="skip-link" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to main content</a>
   <%- include('partials/header') %>
-  <main class="container">
+  <main id="main-content" class="container" tabindex="-1">
     <%- body %>
   </main>
 </body>

@@ -74,6 +74,21 @@ const srv = app.listen(0, async () => {
     if (process.env.STRIPE_ENABLED === 'true') {
       log('Stripe test placeholder', true, 'Enable and add webhook test manually');
     }
+
+    // 9. Sorting (price asc) smoke: ensure when multiple deals exist, lower priced appears before higher priced in HTML order
+    const sorted = await request(port,'GET','/?sort=price');
+    if (sorted.status === 200) {
+      // Extract occurrences of prices in order of appearance
+      const priceMatches = Array.from(sorted.body.matchAll(/Now \$(\d+\.\d{2})/g)).map(m=>parseFloat(m[1]));
+      if (priceMatches.length >= 2) {
+        const isAsc = priceMatches.every((v,i,a)=> i===0 || a[i-1] <= v);
+        log('Sort=price ascending order', isAsc, 'prices='+priceMatches.join(','));
+      } else {
+        log('Sort=price ascending order', true, 'insufficient sample');
+      }
+    } else {
+      log('Sort=price request', false, 'status='+sorted.status);
+    }
   } catch (e) {
     log('Unhandled exception', false, e.message);
   } finally {
@@ -82,6 +97,12 @@ const srv = app.listen(0, async () => {
     console.log('\nTest Results:');
     results.forEach(r=> console.log(`- ${r.ok? 'PASS':'FAIL'}: ${r.name}${r.info? ' ('+r.info+')':''}`));
     console.log(`\nSummary: ${pass} passed, ${fail} failed`);
-    srv.close(()=> process.exit(fail?1:0));
+    srv.close(()=> {
+      if (fail) return process.exit(1);
+      // Chain uiRefresh flag specific test script
+      const { spawn } = require('child_process');
+      const t = spawn('node',['tests/uiRefresh.test.js'], { stdio:'inherit' });
+      t.on('exit', code => process.exit(code));
+    });
   }
 });

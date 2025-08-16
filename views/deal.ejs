@@ -4,7 +4,7 @@
 <% } else { %>
 	<article class="deal-detail">
 		<h1><%= deal.title %></h1>
-		<img class="hero-img" src="<%= deal.image_url || '/img/placeholder.jpg' %>" alt="<%= deal.title %>">
+		<img class="hero-img" src="<%= deal.image_url || '/img/placeholder.jpg' %>" alt="<%= deal.title %>" width="1200" height="630">
 		<div class="price-block">
 			<% if (deal.list_price_cents && deal.from_price_cents && deal.list_price_cents > deal.from_price_cents) { %>
 				<p class="list-price">$<%= (deal.list_price_cents/100).toFixed(2) %></p>
@@ -20,7 +20,7 @@
 		<% if (deal.teaser) { %><p class="teaser"><%= deal.teaser %></p><% } %>
 		<p class="meta">Category: <%= deal.category %> <% if (deal.time_left_days) { %> • <span class="time-left"><%= deal.time_left_days %> day<%= deal.time_left_days!==1?'s':'' %> left</span><% } %></p>
 		<% if (deal.promo_code) { %><p class="promo">Use code <strong><%= deal.promo_code %></strong> <%= deal.promo_note || '' %></p><% } else if (deal.promo_note) { %><p class="promo"><%= deal.promo_note %></p><% } %>
-		<% if (deal.reviews_url) { %><p><a rel="noopener" target="_blank" href="<%= deal.reviews_url %>">Read reviews ↗</a></p><% } %>
+		<% if (deal.reviews_url) { %><p><a rel="noopener noreferrer" target="_blank" href="<%= deal.reviews_url %>">Read reviews ↗</a></p><% } %>
 		<% if (STRIPE_ENABLED && user && deal.from_price_cents != null) { %>
 		<div style="margin:1rem 0;">
 			<form id="buyForm" data-option-id="<%= deal.main_option_id || '' %>">

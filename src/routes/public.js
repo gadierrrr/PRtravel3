@@ -4,14 +4,53 @@ const db = require('../db');
 
 const VALID_CATEGORIES = ['hotel','restaurant','experience'];
 
+// robots.txt
+router.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send(`User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n`);
+});
+
+// sitemap.xml (simple, dynamic)
+router.get('/sitemap.xml', async (req, res, next) => {
+  try {
+    const rows = await db.all(`SELECT slug, updated_at, created_at FROM deals WHERE is_active = 1`);
+    const today = new Date().toISOString().slice(0,10);
+    const urls = [
+      { loc: '/', lastmod: today },
+      ...rows.map(r => ({ loc: `/deal/${r.slug}`, lastmod: (r.updated_at||r.created_at||today).toString().slice(0,10) }))
+    ];
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n` +
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+      urls.map(u => `  <url><loc>${req.protocol}://${req.get('host')}${u.loc}</loc><lastmod>${u.lastmod}</lastmod></url>`).join('\n') +
+      `\n</urlset>`;
+    res.type('application/xml').send(xml);
+  } catch (e) { next(e); }
+});
+
 router.get('/', async (req, res, next) => {
   try {
     const { category } = req.query;
+    const sort = (req.query.sort || 'popular').toLowerCase();
+    const VALID_SORTS = ['popular','price','ending'];
+    const effectiveSort = VALID_SORTS.includes(sort) ? sort : 'popular';
     let where = 'WHERE d.is_active = 1';
     const params = [];
     if (category && VALID_CATEGORIES.includes(category)) {
       where += ' AND d.category = ?';
       params.push(category);
+    }
+    let orderBy;
+    switch (effectiveSort) {
+      case 'price':
+        // Null (no option price) last, then ascending price, fallback to recency
+        orderBy = 'ORDER BY (from_price_cents IS NULL) ASC, from_price_cents ASC, d.created_at DESC';
+        break;
+      case 'ending':
+        // Soonest ending first; null (no deadline) last
+        orderBy = 'ORDER BY (d.ends_at IS NULL) ASC, d.ends_at ASC, d.created_at DESC';
+        break;
+      case 'popular':
+      default:
+        orderBy = 'ORDER BY COALESCE(d.featured_rank, 9999), d.created_at DESC';
     }
     const rows = await db.all(`
       SELECT d.id, d.slug, d.title, d.teaser, d.category, d.image_url,
@@ -21,7 +60,7 @@ router.get('/', async (req, res, next) => {
       LEFT JOIN deal_options o ON o.deal_id = d.id AND o.status = 'active'
       ${where}
       GROUP BY d.id
-      ORDER BY COALESCE(d.featured_rank, 9999), d.created_at DESC
+      ${orderBy}
     `, params);
     const CAT_EMOJI = { hotel: '🏨', restaurant: '🍽️', experience: '🌊', flight: '✈️' };
     const deals = rows.map(r => {
@@ -47,7 +86,7 @@ router.get('/', async (req, res, next) => {
     const featuredDeal = deals[0] || null;
     const updatedAt = new Date().toLocaleTimeString();
     const newDealsCount = deals.length; // simple placeholder
-    res.render('home', { title: 'Puerto Rico Travel Deals', deals, featuredDeal, updatedAt, newDealsCount, currentCategory: category });
+    res.render('home', { title: 'Puerto Rico Travel Deals', deals, featuredDeal, updatedAt, newDealsCount, currentCategory: category, currentSort: effectiveSort });
   } catch (err) { next(err); }
 });
 

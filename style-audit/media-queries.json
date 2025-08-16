@@ -1,0 +1,38 @@
+[
+  {
+    "query": "(prefers-reduced-motion: reduce)",
+    "file": "styles.css"
+  },
+  {
+    "query": "(min-width:421px)",
+    "file": "styles.css"
+  },
+  {
+    "query": "(min-width:769px)",
+    "file": "styles.css"
+  },
+  {
+    "query": "(min-width:1200px)",
+    "file": "styles.css"
+  },
+  {
+    "query": "(min-width: 768px)",
+    "file": "styles.css"
+  },
+  {
+    "query": "(prefers-reduced-motion: no-preference)",
+    "file": "styles.css"
+  },
+  {
+    "query": "(prefers-reduced-motion: reduce)",
+    "file": "styles.css"
+  },
+  {
+    "query": "(max-width:720px)",
+    "file": "styles.css"
+  },
+  {
+    "query": "(min-width:1500px)",
+    "file": "styles.css"
+  }
+]

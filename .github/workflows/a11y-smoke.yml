@@ -1,0 +1,49 @@
+name: a11y-smoke
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  axe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install deps
+        run: npm ci
+      - name: Migrate & seed
+        run: |
+          npm run migrate
+          npm run seed
+      - name: Start server
+        run: |
+          node src/server.js &
+          echo $! > server.pid
+          n=0; until [ $n -ge 30 ]; do curl -fsS http://localhost:3000/ >/dev/null && break; n=$((n+1)); sleep 1; done
+      - name: Run axe (home)
+        run: npx axe http://localhost:3000/ --exit 0 --save ./axe-home.json || true
+      - name: Run axe (sample deal)
+        run: npx axe http://localhost:3000/deal/oceanfront-escape --exit 0 --save ./axe-deal.json || true
+      - name: Filter violations (serious+)
+        run: |
+          node -e 'const fs=require("fs");const keep=["serious","critical"];let bad=false;for(const f of ["axe-home.json","axe-deal.json"]){if(!fs.existsSync(f))continue;const j=JSON.parse(fs.readFileSync(f));const viol=(j.violations||[]).filter(v=>keep.includes(v.impact));if(viol.length){console.log("Serious issues in",f);viol.forEach(v=>console.log(v.id, v.impact));bad=true;} } if(bad){process.exit(1)}'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: axe-a11y-reports
+          path: |
+            axe-home.json
+            axe-deal.json
+      - name: Stop server
+        if: always()
+        run: kill $(cat server.pid) || true

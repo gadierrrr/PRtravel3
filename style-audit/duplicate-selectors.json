@@ -1,0 +1,258 @@
+{
+  ":root": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 2
+      },
+      {
+        "file": "styles.css",
+        "line": 176
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 176
+    }
+  },
+  "*": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 33
+      },
+      {
+        "file": "styles.css",
+        "line": 119
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 119
+    }
+  },
+  ".nav-cats a": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 47
+      },
+      {
+        "file": "styles.css",
+        "line": 169
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 169
+    }
+  },
+  ".hero": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 51
+      },
+      {
+        "file": "styles.css",
+        "line": 167
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 167
+    }
+  },
+  ".hero h1": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 52
+      },
+      {
+        "file": "styles.css",
+        "line": 168
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 168
+    }
+  },
+  ".grid": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 65
+      },
+      {
+        "file": "styles.css",
+        "line": 137
+      },
+      {
+        "file": "styles.css",
+        "line": 141
+      },
+      {
+        "file": "styles.css",
+        "line": 145
+      },
+      {
+        "file": "styles.css",
+        "line": 149
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 149
+    }
+  },
+  ".card:hover": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 70
+      },
+      {
+        "file": "styles.css",
+        "line": 120
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 120
+    }
+  },
+  ".theme-refresh .deal-grid": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 138
+      },
+      {
+        "file": "styles.css",
+        "line": 142
+      },
+      {
+        "file": "styles.css",
+        "line": 146
+      },
+      {
+        "file": "styles.css",
+        "line": 150
+      },
+      {
+        "file": "styles.css",
+        "line": 257
+      },
+      {
+        "file": "styles.css",
+        "line": 273
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 273
+    }
+  },
+  ".theme-refresh .deal-card-v2 .media img": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 155
+      },
+      {
+        "file": "styles.css",
+        "line": 260
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 260
+    }
+  },
+  ".theme-refresh .chip": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 160
+      },
+      {
+        "file": "styles.css",
+        "line": 252
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 252
+    }
+  },
+  ".ticker": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 203
+      },
+      {
+        "file": "styles.css",
+        "line": 208
+      },
+      {
+        "file": "styles.css",
+        "line": 238
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 238
+    }
+  },
+  ".theme-refresh .hero-v2": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 247
+      },
+      {
+        "file": "styles.css",
+        "line": 249
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 249
+    }
+  },
+  ".theme-refresh .hero-v2 h1": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 248
+      },
+      {
+        "file": "styles.css",
+        "line": 249
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 249
+    }
+  },
+  ".theme-refresh .btn-cta-orange": {
+    "definitions": [
+      {
+        "file": "styles.css",
+        "line": 255
+      },
+      {
+        "file": "styles.css",
+        "line": 270
+      }
+    ],
+    "final": {
+      "file": "styles.css",
+      "line": 270
+    }
+  }
+}

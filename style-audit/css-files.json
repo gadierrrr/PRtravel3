@@ -1,0 +1,11 @@
+[
+  {
+    "file": "styles.css",
+    "path": "/public/css/styles.css",
+    "bytes": 16416,
+    "orderIndex": 0,
+    "referencedBy": [
+      "layout.ejs"
+    ]
+  }
+]

@@ -120,6 +120,48 @@ table thead th:last-child { border-top-right-radius:var(--radius-sm); }
   .card:hover { transform:none; }
 }
 
+/* A11y helpers */
+.visually-hidden { position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip:rect(0 0 0 0) !important; white-space:nowrap !important; border:0 !important; }
+.skip-link:focus { position:static !important; width:auto !important; height:auto !important; padding:0.6rem 1rem !important; background:#004F63 !important; color:#fff !important; border-radius:var(--radius-pill); box-shadow:var(--shadow-sm); }
+
+/* =====================================================================
+   Responsive refinements (explicit columns & pill hit areas) - APPEND ONLY
+   Breakpoints:
+     <=420px: 1 col (base)
+     421-768px: 2 cols
+     769-1199px: 3 cols
+     >=1200px: 4 cols
+   ===================================================================== */
+
+/* Base: single column */
+.grid { grid-template-columns:repeat(1,minmax(0,1fr)); }
+.theme-refresh .deal-grid { grid-template-columns:repeat(1,minmax(0,1fr)); }
+
+@media (min-width:421px){
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .theme-refresh .deal-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (min-width:769px){
+  .grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .theme-refresh .deal-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media (min-width:1200px){
+  .grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .theme-refresh .deal-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
+
+/* Enforce consistent card image aspect ratio */
+.grid > .card img,
+.theme-refresh .deal-card-v2 .media img { aspect-ratio:4 / 3; object-fit:cover; }
+
+/* Category & sort pills / chips: wrap-friendly with larger tap target */
+.nav-cats a,
+.pill,
+.theme-refresh .chip { min-height:40px; display:inline-flex; align-items:center; padding:0 0.95rem; }
+
+/* Allow wrapping inside legacy hero categories container */
+.cats, .filters-bar { flex-wrap:wrap; }
+
 /* Responsive breakpoint */
 @media (min-width: 768px) {
   .hero { padding:5rem 1.5rem 4rem; }

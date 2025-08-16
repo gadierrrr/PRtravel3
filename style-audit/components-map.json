@@ -1,0 +1,71 @@
+{
+  "hero": {
+    "legacy": {
+      "container": ".hero",
+      "title": ".hero h1",
+      "subtitle": ".hero-lede",
+      "chips": ".pill",
+      "ticker": ".ticker",
+      "cta": ".btn"
+    },
+    "refresh": {
+      "container": ".hero-v2",
+      "title": ".hero-v2 h1",
+      "subtitle": ".hero-sub",
+      "chips": ".chip",
+      "ticker": ".meta-row",
+      "cta": ".btn-cta-orange"
+    }
+  },
+  "chipsRow": {
+    "legacy": ".cats .pill",
+    "refresh": ".filters-bar .chip",
+    "active": {
+      "legacy": ".pill.active",
+      "refresh": ".chip.active"
+    }
+  },
+  "dealGrid": {
+    "legacy": ".grid",
+    "refresh": ".deal-grid",
+    "gaps": {
+      "legacy": "1.25rem",
+      "refresh": "1.4rem"
+    },
+    "columns": [
+      "1/2/3/4 responsive overrides"
+    ]
+  },
+  "dealCard": {
+    "legacy": {
+      "container": ".card",
+      "image": ".card img",
+      "title": ".card h3",
+      "teaser": ".teaser",
+      "priceNow": ".price-now",
+      "priceWas": ".price-was",
+      "discount": ".pill.off",
+      "button": ".btn",
+      "saveLink": "(inline link after .btn)"
+    },
+    "refresh": {
+      "container": ".deal-card-v2",
+      "image": ".deal-card-v2 .media img",
+      "title": ".deal-card-v2 .title",
+      "teaser": ".deal-card-v2 .teaser",
+      "priceNow": ".price-row-v2 .now",
+      "priceWas": ".price-row-v2 .was",
+      "discount": ".price-row-v2 .pct / .discount-badge",
+      "button": ".btn-cta-orange",
+      "saveLink": "(n/a)"
+    }
+  },
+  "page": {
+    "backgroundTokens": [
+      "--color-bg",
+      "--bg-cream"
+    ],
+    "font": "--font-stack",
+    "container": ".container (max-width:1200px)"
+  }
+}

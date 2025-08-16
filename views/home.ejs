@@ -2,12 +2,18 @@
 <section class="hero hero-v2" role="banner">
   <h1>Discover Puerto Rico Deals</h1>
   <p class="hero-sub">Sun-soaked steals, island-wide.</p>
-  <div class="filters-bar" aria-label="Categories">
-    <a class="chip <%= !currentCategory ? 'active' : '' %>" href="/">All</a>
-    <a class="chip <%= currentCategory==='hotel' ? 'active' : '' %>" href="/?category=hotel">Hotels</a>
-    <a class="chip <%= currentCategory==='restaurant' ? 'active' : '' %>" href="/?category=restaurant">Dining</a>
-    <a class="chip <%= currentCategory==='experience' ? 'active' : '' %>" href="/?category=experience">Experiences</a>
-    <a class="chip <%= currentCategory==='flight' ? 'active' : '' %>" href="/?category=flight">Flights</a>
+  <div class="filters-bar" aria-label="Categories and sorting">
+    <!-- Category chips -->
+    <a class="chip <%= !currentCategory ? 'active' : '' %>" href="/?<%= currentSort ? 'sort='+currentSort : '' %>">All</a>
+    <a class="chip <%= currentCategory==='hotel' ? 'active' : '' %>" href="/?category=hotel<%= currentSort? '&sort='+currentSort:'' %>">Hotels</a>
+    <a class="chip <%= currentCategory==='restaurant' ? 'active' : '' %>" href="/?category=restaurant<%= currentSort? '&sort='+currentSort:'' %>">Dining</a>
+    <a class="chip <%= currentCategory==='experience' ? 'active' : '' %>" href="/?category=experience<%= currentSort? '&sort='+currentSort:'' %>">Experiences</a>
+    <a class="chip <%= currentCategory==='flight' ? 'active' : '' %>" href="/?category=flight<%= currentSort? '&sort='+currentSort:'' %>">Flights</a>
+    <!-- Sort chips -->
+    <span style="flex-basis:100%; height:0;"></span>
+    <a class="chip <%= currentSort==='popular' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=popular" aria-label="Sort by featured/popular">Popular</a>
+    <a class="chip <%= currentSort==='price' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=price" aria-label="Sort by lowest price">Price</a>
+    <a class="chip <%= currentSort==='ending' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=ending" aria-label="Sort by ending soon">Ending Soon</a>
   </div>
   <div class="meta-row" aria-live="polite">✨ <%= newDealsCount %> new deals today • Updated <%= updatedAt %></div>
   <div class="hero-cta"><a class="btn-cta-orange" href="/signup">Get Early Access</a></div>
@@ -16,11 +22,20 @@
 <section class="hero" role="banner">
   <h1>Discover Puerto Rico Deals</h1>
   <p class="hero-lede">Sun-soaked steals, island-wide.</p>
-  <div class="cats" aria-label="Categories">
-    <a class="pill" href="/?category=hotel">🏨 Hotels</a>
-    <a class="pill" href="/?category=restaurant">🍽️ Dining</a>
-    <a class="pill" href="/?category=experience">🌊 Experiences</a>
-    <a class="pill" href="/?category=flight">✈️ Flights</a>
+  <div class="cats" aria-label="Categories and sorting">
+    <div class="cat-row">
+      <a class="pill" href="/?<%= currentSort ? 'sort='+currentSort : '' %>">All</a>
+      <a class="pill" href="/?category=hotel<%= currentSort? '&sort='+currentSort:'' %>">🏨 Hotels</a>
+      <a class="pill" href="/?category=restaurant<%= currentSort? '&sort='+currentSort:'' %>">🍽️ Dining</a>
+      <a class="pill" href="/?category=experience<%= currentSort? '&sort='+currentSort:'' %>">🌊 Experiences</a>
+      <a class="pill" href="/?category=flight<%= currentSort? '&sort='+currentSort:'' %>">✈️ Flights</a>
+    </div>
+    <div class="sort-row" style="margin-top:.75rem; font-size:.75rem; display:flex; gap:.5rem; flex-wrap:wrap;">
+      <strong style="margin-right:.25rem;">Sort:</strong>
+      <a class="pill <%= currentSort==='popular' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=popular">Popular</a>
+      <a class="pill <%= currentSort==='price' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=price">Price</a>
+      <a class="pill <%= currentSort==='ending' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=ending">Ending Soon</a>
+    </div>
   </div>
   <div class="ticker" aria-live="polite">✨ <%= newDealsCount %> new deals today • Last updated <%= updatedAt %></div>
   <div style="margin-top:1rem;">
@@ -66,7 +81,7 @@
     <% deals.forEach(d => { %>
       <article class="deal-card-v2">
         <div class="media">
-          <a href="/deal/<%= encodeURIComponent(d.slug) %>"><img loading="lazy" src="<%= d.image_url %>" alt="<%= d.title %>"></a>
+          <a href="/deal/<%= encodeURIComponent(d.slug) %>"><img loading="lazy" src="<%= d.image_url %>" alt="<%= d.title %>" width="400" height="300"></a>
           <% if (d.discount_percent) { %><span class="discount-badge">-<%= d.discount_percent %>%</span><% } %>
         </div>
         <div class="body">
@@ -95,7 +110,7 @@
   <% if (deals && deals.length) { %>
     <% deals.forEach(d => { %>
       <a class="card" href="/deal/<%= encodeURIComponent(d.slug) %>">
-        <img src="<%= d.image_url %>" alt="<%= d.title %>" />
+  <img src="<%= d.image_url %>" alt="<%= d.title %>" width="400" height="300" />
         <% if (d.badge_text) { %><span class="badge"><%= d.badge_text %></span><% } %>
         <h3><span aria-hidden="true" class="emoji-pill"><%= d.category_emoji %></span><%= d.title %></h3>
         <% if (d.merchant_name) { %><p class="merchant"><%= d.merchant_name %></p><% } %>
