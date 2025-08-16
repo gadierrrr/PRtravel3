@@ -1,3 +1,18 @@
+<% if (uiRefresh) { %>
+<section class="hero hero-v2" role="banner">
+  <h1>Discover Puerto Rico Deals</h1>
+  <p class="hero-sub">Sun-soaked steals, island-wide.</p>
+  <div class="filters-bar" aria-label="Categories">
+    <a class="chip <%= !currentCategory ? 'active' : '' %>" href="/">All</a>
+    <a class="chip <%= currentCategory==='hotel' ? 'active' : '' %>" href="/?category=hotel">Hotels</a>
+    <a class="chip <%= currentCategory==='restaurant' ? 'active' : '' %>" href="/?category=restaurant">Dining</a>
+    <a class="chip <%= currentCategory==='experience' ? 'active' : '' %>" href="/?category=experience">Experiences</a>
+    <a class="chip <%= currentCategory==='flight' ? 'active' : '' %>" href="/?category=flight">Flights</a>
+  </div>
+  <div class="meta-row" aria-live="polite">✨ <%= newDealsCount %> new deals today • Updated <%= updatedAt %></div>
+  <div class="hero-cta"><a class="btn-cta-orange" href="/signup">Get Early Access</a></div>
+</section>
+<% } else { %>
 <section class="hero" role="banner">
   <h1>Discover Puerto Rico Deals</h1>
   <p class="hero-lede">Sun-soaked steals, island-wide.</p>
@@ -12,6 +27,7 @@
     <a class="btn" href="/signup">Get Early Access</a>
   </div>
 </section>
+<% } %>
 
 <% if (featuredDeal) { %>
 <section class="spotlight" aria-label="Spotlight deal">
@@ -44,6 +60,37 @@
 </section>
 <% } %>
 
+<% if (uiRefresh) { %>
+<section class="deal-grid" aria-label="Deals list">
+  <% if (deals && deals.length) { %>
+    <% deals.forEach(d => { %>
+      <article class="deal-card-v2">
+        <div class="media">
+          <a href="/deal/<%= encodeURIComponent(d.slug) %>"><img loading="lazy" src="<%= d.image_url %>" alt="<%= d.title %>"></a>
+          <% if (d.discount_percent) { %><span class="discount-badge">-<%= d.discount_percent %>%</span><% } %>
+        </div>
+        <div class="body">
+          <h3 class="title"><a href="/deal/<%= encodeURIComponent(d.slug) %>"><%= d.title %></a></h3>
+          <% if (d.teaser) { %><p class="teaser"><%= d.teaser %></p><% } %>
+          <div class="price-row-v2">
+            <% if (d.from_price_cents != null) { %>
+              <span class="now">Now $<%= (d.from_price_cents/100).toFixed(2) %></span>
+              <% if (d.list_price_cents && d.list_price_cents > d.from_price_cents) { %>
+                <span class="was">$<%= (d.list_price_cents/100).toFixed(2) %></span>
+                <span class="pct">-<%= d.discount_percent %>%</span>
+              <% } %>
+            <% } %>
+          </div>
+          <a class="btn-cta-orange" href="/deal/<%= encodeURIComponent(d.slug) %>">View deal</a>
+          <% if (d.ends_at) { %><p class="time-left" data-ends="<%= d.ends_at %>"></p><% } %>
+        </div>
+      </article>
+    <% }) %>
+  <% } else { %>
+    <p>No deals yet.</p>
+  <% } %>
+</section>
+<% } else { %>
 <section class="grid" aria-label="Deals list">
   <% if (deals && deals.length) { %>
     <% deals.forEach(d => { %>
@@ -72,6 +119,7 @@
     <p>No deals yet.</p>
   <% } %>
 </section>
+<% } %>
 <script>
   document.querySelectorAll('.time-left[data-ends]').forEach(el=>{
     const ends = new Date(el.getAttribute('data-ends')).getTime();

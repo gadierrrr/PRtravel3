@@ -29,6 +29,10 @@ app.use((req, res, next) => {
   res.locals.currentCategory = null;
   res.locals.user = null; // will be populated after auth init
   res.locals.STRIPE_ENABLED = process.env.STRIPE_ENABLED === 'true';
+  // UI refresh feature flag: default ON in dev unless explicitly disabled; prod requires UI_REFRESH=1
+  const envFlag = process.env.UI_REFRESH === '1';
+  const isDev = process.env.NODE_ENV !== 'production';
+  res.locals.uiRefresh = envFlag || (isDev && process.env.UI_REFRESH !== '0');
   next();
 });
 
