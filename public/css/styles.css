@@ -195,3 +195,66 @@ table thead th:last-child { border-top-right-radius:var(--radius-sm); }
 @media (prefers-reduced-motion: reduce){
   .ticker, .spotlight:hover { animation: none !important; }
 }
+
+/* === THEME V2 TOKENS & COMPONENTS (APPENDED) === */
+:root {
+  --bg-cream: #FEF7EF;
+  --ink: #053347;
+  --ink-muted: #5B6A72;
+  --border-soft: #E6E2DD;
+  --hero-teal-start: #004F63;
+  --hero-teal-end: #007A87;
+  --accent-orange: #FF7A1A;
+  --accent-orange-hover: #E86407;
+  --accent-orange-soft: #FFE1CC;
+  --badge-orange-bg: #FFF1E6;
+  --badge-orange-text: #C55300;
+  --pill-bg: #E7F1F2;
+  --pill-active-bg: #C7E3E7;
+  --pill-text: #094F5A;
+  --price-now: #004F63;
+  --price-was: #8A979E;
+  --discount-pill-bg: #FFE1CC;
+  --discount-pill-text: #B95000;
+  --card-radius-lg: 22px;
+  --card-shadow: 0 6px 18px rgba(0,0,0,.07);
+  --focus-ring: 0 0 0 3px rgba(0,123,255,.35);
+}
+
+body { background: var(--bg-cream); }
+
+.site-header-v2 { background:#fff; color:var(--ink); box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+.site-header-v2 a { color:var(--ink); }
+.site-header-v2 .brand-mark { font-weight:700; font-size:1.05rem; letter-spacing:.5px; }
+
+.hero-v2 { background:linear-gradient(135deg,var(--hero-teal-start),var(--hero-teal-end)); color:#fff; border-radius:var(--card-radius-lg); padding:3rem 3.5rem 3.25rem; box-shadow:var(--card-shadow); }
+@media (max-width:640px){ .hero-v2 { padding:2rem 1.5rem 2.25rem; } }
+
+.filters-bar { display:flex; gap:.5rem; flex-wrap:wrap; margin:1rem 0 1.25rem; }
+.filters-bar .pill { background:var(--pill-bg); color:var(--pill-text); padding:.45rem .9rem; border-radius:999px; font-size:.8rem; font-weight:600; line-height:1; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
+.filters-bar .pill:hover { background:var(--pill-active-bg); }
+.filters-bar .pill.active { background:var(--pill-active-bg); }
+
+.deal-grid { display:grid; gap:1.35rem; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); margin-top:2.25rem; }
+.deal-card-v2 { background:#fff; border-radius:var(--card-radius-lg); box-shadow:var(--card-shadow); overflow:hidden; display:flex; flex-direction:column; position:relative; }
+.deal-card-v2 .media { position:relative; }
+.deal-card-v2 .media img { width:100%; height:200px; object-fit:cover; display:block; }
+@media (min-width:900px){ .deal-card-v2 .media img { height:180px; } }
+.discount-badge { position:absolute; top:10px; left:10px; background:var(--badge-orange-bg); color:var(--badge-orange-text); font-size:.70rem; font-weight:700; padding:.3rem .55rem; border-radius:14px; letter-spacing:.5px; }
+.deal-card-v2 .body { padding:1rem 1.1rem 1.25rem; display:flex; flex-direction:column; }
+.deal-card-v2 .title { font-size:1.05rem; font-weight:700; margin:0 0 .45rem; color:var(--ink); }
+.deal-card-v2 .teaser { margin:0 0 .65rem; font-size:.83rem; color:var(--ink-muted); }
+.price-row-v2 { display:flex; align-items:center; gap:.55rem; font-size:.9rem; margin-bottom:.8rem; }
+.price-row-v2 .now { color:var(--price-now); font-weight:700; }
+.price-row-v2 .was { color:var(--price-was); text-decoration:line-through; }
+.price-row-v2 .pct { background:var(--discount-pill-bg); color:var(--discount-pill-text); padding:.2rem .5rem; border-radius:999px; font-weight:600; font-size:.65rem; letter-spacing:.5px; }
+
+.btn-cta-orange { background:var(--accent-orange); color:#fff; text-decoration:none; padding:.55rem 1.1rem; font-weight:700; border-radius:999px; display:inline-block; font-size:.85rem; transition:background .15s; box-shadow:0 2px 4px rgba(0,0,0,0.15); }
+.btn-cta-orange:hover { background:var(--accent-orange-hover); }
+.btn-cta-orange:focus-visible { outline:var(--focus-ring); }
+
+.promo-note { margin-top:.6rem; font-size:.7rem; color:var(--ink-muted); }
+
+/* Accessibility: Ensure focus for new pills/cards */
+.filters-bar .pill:focus-visible, .deal-card-v2 a:focus-visible, .btn-cta-orange:focus-visible { outline:3px solid var(--color-focus); outline-offset:2px; }
+
