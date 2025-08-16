@@ -271,9 +271,15 @@ body.theme-refresh { background: var(--bg-cream); font-feature-settings: "liga" 
 /* ensure single visual row; allow horizontal scroll if overflow */
 .theme-refresh .hero-v2 .ticker { font-size:.7rem; opacity:.55; margin-top:.9rem; font-weight:500; letter-spacing:.3px; }
 .theme-refresh .hero-v2 .btn-cta-orange { margin-top:1.2rem; }
-.theme-refresh .chip { background:var(--chip-bg); color:#094F5A; padding:.5rem 1rem; border-radius:999px; font-size:.8rem; font-weight:600; line-height:1; text-decoration:none; display:inline-flex; align-items:center; gap:.35rem; box-shadow:0 2px 4px rgba(0,0,0,.04); }
-.theme-refresh .chip.active { background:var(--chip-active-bg); }
+.theme-refresh .chip { background:var(--chip-bg); color:#094F5A; padding:.55rem 1rem; border-radius:999px; font-size:.78rem; font-weight:600; line-height:1; text-decoration:none; display:inline-flex; align-items:center; gap:.35rem; box-shadow:0 2px 4px rgba(0,0,0,.04); position:relative; transition:background var(--transition-fast), color var(--transition-fast); }
+.theme-refresh .chip:hover { background:var(--chip-active-bg); }
+.theme-refresh .chip.active { background:var(--chip-active-bg); box-shadow:0 0 0 2px rgba(255,255,255,0.6) inset; }
 .theme-refresh .chip:focus-visible { outline:3px solid #fff; outline-offset:2px; }
+.theme-refresh .chip:active { transform:translateY(1px); }
+/* shared sort row visual grouping */
+.theme-refresh .sort-row-refresh { display:flex; gap:.55rem; flex-wrap:nowrap; overflow-x:auto; margin:.75rem 0 0; padding:.15rem .25rem .35rem; justify-content:center; scrollbar-width:none; }
+.theme-refresh .sort-row-refresh::-webkit-scrollbar { display:none; }
+.theme-refresh .sort-row-refresh .chip { font-weight:600; }
 .theme-refresh .btn-cta-orange { background:var(--cta-orange); }
 .theme-refresh .btn-cta-orange:hover { background:var(--cta-orange-hover); }
 .theme-refresh .deal-grid { display:grid; gap:1.4rem; margin:2.2rem auto 0; max-width:1320px; /* merged former auto-fill base into explicit breakpoint system (UI refresh pass 1) */ }

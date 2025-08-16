@@ -2,15 +2,14 @@
 <section class="hero hero-v2" role="banner">
   <h1>Discover Puerto Rico Deals</h1>
   <p class="hero-sub">Sun-soaked steals, island-wide.</p>
-  <div class="filters-bar" aria-label="Categories and sorting">
-    <!-- Category chips -->
+  <div class="filters-bar" aria-label="Categories">
     <a class="chip <%= !currentCategory ? 'active' : '' %>" href="/?<%= currentSort ? 'sort='+currentSort : '' %>">All</a>
     <a class="chip <%= currentCategory==='hotel' ? 'active' : '' %>" href="/?category=hotel<%= currentSort? '&sort='+currentSort:'' %>">Hotels</a>
     <a class="chip <%= currentCategory==='restaurant' ? 'active' : '' %>" href="/?category=restaurant<%= currentSort? '&sort='+currentSort:'' %>">Dining</a>
     <a class="chip <%= currentCategory==='experience' ? 'active' : '' %>" href="/?category=experience<%= currentSort? '&sort='+currentSort:'' %>">Experiences</a>
     <a class="chip <%= currentCategory==='flight' ? 'active' : '' %>" href="/?category=flight<%= currentSort? '&sort='+currentSort:'' %>">Flights</a>
-    <!-- Sort chips -->
-    <span style="flex-basis:100%; height:0;"></span>
+  </div>
+  <div class="sort-row-refresh" aria-label="Sorting options">
     <a class="chip <%= currentSort==='popular' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=popular" aria-label="Sort by featured/popular">Popular</a>
     <a class="chip <%= currentSort==='price' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=price" aria-label="Sort by lowest price">Price</a>
     <a class="chip <%= currentSort==='ending' ? 'active' : '' %>" href="/?<%= currentCategory? 'category='+currentCategory+'&' : '' %>sort=ending" aria-label="Sort by ending soon">Ending Soon</a>
