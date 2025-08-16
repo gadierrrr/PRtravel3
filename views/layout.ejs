@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#005067" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
-<body class="<%= uiRefresh ? 'theme-refresh' : 'theme-legacy' %> theme-refresh"><!-- baseline pass ensures theme-refresh class present for public pages -->
+<body class="<%= (!forceLegacy && uiRefresh) ? 'theme-refresh' : 'theme-legacy' %>"><!-- admin safety: theme-refresh only on public pages -->
   <a href="#main-content" class="skip-link" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to main content</a>
   <%- include('partials/header') %>
   <main id="main-content" class="container" tabindex="-1">
