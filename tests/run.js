@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /* Minimal smoke test runner (no external deps) */
+process.env.NODE_ENV = 'test'; // ensure test-only routes & behaviors
 const { request, extractCsrf } = require('./helpers');
 process.env.SESSION_SECRET = 'test_secret';
 process.env.ADMIN_PASSWORD = 'adminpass';
@@ -26,7 +27,7 @@ const srv = app.listen(0, async () => {
     const baseCookie = (signupPage.headers['set-cookie']||[])[0]?.split(';')[0] || '';
     const email = 'u'+Date.now()+'@t.test';
     const signupResp = await request(port,'POST','/signup',{ headers:{ Cookie: baseCookie }, bodyObj:{ email, password:'Pass1234', _csrf: csrf1 }});
-    log('POST /signup redirect', signupResp.status === 302, 'status='+signupResp.status);
+  log('POST /signup redirect', (signupResp.status === 302 || signupResp.status === 303), 'status='+signupResp.status);
     function buildJar(existing, setCookies){
       const map = new Map();
       const parts = existing? existing.split(/;\s*/).filter(p=>p.includes('=')) : [];
@@ -41,11 +42,33 @@ const srv = app.listen(0, async () => {
     log('GET /account after signup 200', account.status === 200, 'status='+account.status);
 
     // 5. Login negative (wrong password)
-    const loginPage = await request(port,'GET','/login');
-    const csrf2 = extractCsrf(loginPage.body);
-    const loginCookie = (loginPage.headers['set-cookie']||[])[0]?.split(';')[0] || '';
-    const badLogin = await request(port,'POST','/login',{ headers:{ Cookie: loginCookie }, bodyObj:{ email, password:'Wrong', _csrf: csrf2 }});
-    log('POST /login invalid creds 401', badLogin.status === 401, 'status='+badLogin.status);
+  const loginPage = await request(port,'GET','/login');
+  log('GET /login shows login form', /<h2>Login/.test(loginPage.body));
+  const csrf2 = extractCsrf(loginPage.body);
+  const loginCookie = (loginPage.headers['set-cookie']||[])[0]?.split(';')[0] || '';
+  const badLogin = await request(port,'POST','/login',{ headers:{ Cookie: loginCookie }, bodyObj:{ email, password:'Wrong', _csrf: csrf2 }});
+  log('POST /login invalid creds 401', badLogin.status === 401, 'status='+badLogin.status);
+
+  // Positive login (redirect to /)
+  const loginPage2 = await request(port,'GET','/login');
+  const csrf3 = extractCsrf(loginPage2.body);
+  const loginCookie2 = (loginPage2.headers['set-cookie']||[])[0]?.split(';')[0] || '';
+  const goodLogin = await request(port,'POST','/login',{ headers:{ Cookie: loginCookie2 }, bodyObj:{ email, password:'Pass1234', _csrf: csrf3 }});
+  log('POST /login success redirect /', (goodLogin.status === 302 || goodLogin.status === 303) && (goodLogin.headers.location === '/'));
+  // Merge cookies from login success
+  const jarAfterLogin = buildJar(loginCookie2, goodLogin.headers['set-cookie']);
+  // Follow redirect to get fresh token after session regeneration
+  const postLoginHome = await request(port,'GET','/', { headers:{ Cookie: jarAfterLogin } });
+  const csrfAfterLogin = extractCsrf(postLoginHome.body);
+  log('Post-login page has csrf token', !!csrfAfterLogin);
+
+  // Logout success with token
+  const logoutResp = await request(port,'POST','/logout', { headers:{ Cookie: jarAfterLogin }, bodyObj:{ _csrf: csrfAfterLogin } });
+  log('POST /logout success redirect', logoutResp.status === 302, 'status='+logoutResp.status);
+
+  // Attempt logout again without token (should 403)
+  const logoutNoToken = await request(port,'POST','/logout', { headers:{ Cookie: loginCookie2 }, bodyObj:{ } });
+  log('POST /logout missing token 403', logoutNoToken.status === 403, 'status='+logoutNoToken.status);
 
     // 6. Admin guard
     const adminGate = await request(port,'GET','/admin');
@@ -89,6 +112,16 @@ const srv = app.listen(0, async () => {
     } else {
       log('Sort=price request', false, 'status='+sorted.status);
     }
+
+  // 10. 404 page marker
+  const missing = await request(port,'GET','/no-such-route-xyz');
+  log('GET /no-such-route-xyz 404', missing.status === 404, 'status='+missing.status);
+  log('404 marker present', /NOT_FOUND_MARKER/.test(missing.body));
+
+  // 11. 500 page marker via test route
+  const serverErr = await request(port,'GET','/__trigger_error');
+  log('GET /__trigger_error 500', serverErr.status === 500, 'status='+serverErr.status);
+  log('500 marker present', /SERVER_ERROR_MARKER/.test(serverErr.body));
   } catch (e) {
     log('Unhandled exception', false, e.message);
   } finally {

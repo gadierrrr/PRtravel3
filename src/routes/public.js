@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const csrf = require('../middleware/csrf');
 const db = require('../db');
 
 const VALID_CATEGORIES = ['hotel','restaurant','experience'];
@@ -26,7 +27,7 @@ router.get('/sitemap.xml', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.get('/', async (req, res, next) => {
+router.get('/', csrf, async (req, res, next) => {
   try {
     const { category } = req.query;
     const sort = (req.query.sort || 'popular').toLowerCase();

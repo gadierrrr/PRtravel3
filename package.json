@@ -9,7 +9,8 @@
     "start": "node src/server.js",
     "migrate": "node db/migrate.js",
     "seed": "node db/seed.js",
-    "test": "node tests/run.js"
+  "test": "node tests/run.js",
+  "secret-scan": "grep -R --exclude-dir=node_modules -nE 'sk_(live|test)_[0-9A-Za-z]{10,}|pk_(live|test)_[0-9A-Za-z]{10,}' . || echo 'No secret-like patterns.'"
   },
   "engines": {
     "node": ">=18"
@@ -37,5 +38,11 @@
     "@axe-core/cli": "^4.10.2",
     "lighthouse": "^12.8.1",
     "nodemon": "^3.1.4"
+  }
+  ,
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run secret-scan && echo 'Secret scan passed'"
+    }
   }
 }

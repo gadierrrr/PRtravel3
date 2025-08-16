@@ -24,10 +24,11 @@ router.post('/login', authLimiter, csrf, (req, res, next) => {
 			// regenerate then log in
 			req.session.regenerate((regenErr) => {
 				if (regenErr) return next(regenErr);
-				req.logIn(user, (err2) => {
-					if (err2) return next(err2);
-					req.session.save(() => res.redirect('/account'));
-				});
+					req.logIn(user, (err2) => {
+						if (err2) return next(err2);
+						// 303 ensures a subsequent GET fetches a fresh CSRF token in header
+						req.session.save(() => res.redirect(303, '/'));
+					});
 			});
 	})(req, res, next);
 });
@@ -54,7 +55,7 @@ router.post('/signup', authLimiter, csrf, async (req, res, next) => {
 			if (regenErr) return next(regenErr);
 			req.logIn(user, (err) => {
 				if (err) return next(err);
-				req.session.save(() => res.redirect('/account'));
+				req.session.save(() => res.redirect(303, '/account'));
 			});
 		});
 	} catch (e) { next(e); }

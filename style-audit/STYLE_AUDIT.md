@@ -121,3 +121,38 @@ Included in `style-audit/`:
 6. Introduce design tokens file (e.g., `tokens.css`) imported before components.
 
 -- End of Audit --
+
+## Delta Plan → Implemented (UI Refresh Pass 1)
+
+Tokens added / normalized:
+- Introduced single consolidated `:root` block (removed secondary scattered vars) with semantic refresh tokens: `--bg-cream`, `--surface-card`, `--ink`, `--ink-muted`, `--cta-orange`, `--cta-orange-hover`, `--hero-start`, `--hero-end`, `--chip-bg`, `--chip-active-bg`, `--badge-bg`, `--badge-ink`, `--price-now`, `--price-was`, `--r-card`, `--r-hero`, `--shadow-card`, `--shadow-hero`.
+- Retained legacy tokens for backward compatibility (`--color-*`, spacing, shadows, radii) pending legacy theme retirement.
+- Mapped hard-coded refresh literals to new tokens (hero gradient stops, chip backgrounds, badge/pct styles, price colors) where not visually changing.
+
+Breakpoint set chosen (mobile-first):
+- Base (0–420), `@media (min-width:421px)`, `@media (min-width:769px)`, `@media (min-width:1200px)`, optional `@media (min-width:1500px)` (ultrawide refinement retained).
+- Removed earlier implicit / off-by-one duplication (consolidated 768 vs 769 into 769 tier for refresh components; legacy 768 rule left only where still necessary until legacy removal).
+
+Duplicate selector merges (high level):
+- `.deal-grid` unified into single breakpoint-driven set (added merge comment; removed earlier auto-fill variability in refresh scope).
+- Responsive grid definitions collapsed to one definition per breakpoint for legacy `.grid` and refresh `.deal-grid` (comments note prior sources).
+- Hero styles: refresh hero (`.hero-v2`) isolated; legacy `.hero` untouched; no cross-over side effects.
+- Consolidated chip styles into `.theme-refresh .chip` replacing ad-hoc duplicates; legacy `.pill` retained as prune candidate.
+
+Tiny HTML hooks added:
+- Added `hero-v2` class in home hero (refresh only) for scoped new layout.
+- Added structural wrappers on deal detail: `.dd-layout`, `.dd-main`, `.dd-side`, `.price-panel`, `.tabs` for two-column + price block styling.
+- Added guarded template variable usage (`__currentSort`, `__currentCategory`) and a defaulted `__forceLegacy` in layout to prevent runtime errors (HTML logic only, no styling leaks).
+
+Accessibility & safety notes:
+- All new interactive elements (chips/CTA) maintain visible focus (`outline` preserved / white focus on dark background).
+- No color contrast regressions introduced (chips/background combos exceed AA for small text except decorative badge foreground which matches mockup; slated for contrast recheck in Pass 2).
+
+Pending prune (already listed in `/* PRUNE CANDIDATES AFTER PARITY */` inside `styles.css`): legacy pills, spotlight, legacy price classes, obsolete nav categories, duplicate color tokens once migration completes.
+
+Next cleanup (future PR, not executed here):
+- Remove deprecated legacy-only selectors once flag dropped.
+- Fold ultrawide rule into standard grid if usage analytics < threshold.
+- Tokenize remaining raw literals (#FFE1CC, #B95000, etc.) into discount/badge semantic tokens.
+
+-- End of Delta Summary --

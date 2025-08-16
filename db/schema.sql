@@ -125,3 +125,29 @@ CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_deal_id ON order_items(deal_id);
 
 -- FUTURE: additional tables (sessions, payments, etc.)
+
+-- VOUCHERS (Simple issuance + redemption tracking)
+CREATE TABLE IF NOT EXISTS vouchers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  code TEXT NOT NULL UNIQUE,
+  redeemed_at DATETIME,
+  redeemed_by TEXT, -- actor identifier (admin email or id)
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_vouchers_order_id ON vouchers(order_id);
+CREATE INDEX IF NOT EXISTS idx_vouchers_redeemed_at ON vouchers(redeemed_at);
+
+-- VOUCHER AUDIT (append-only event log)
+CREATE TABLE IF NOT EXISTS voucher_audit (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  code TEXT NOT NULL,
+  event TEXT NOT NULL CHECK(event IN ('issued','redeemed','redeem_denied','refunded')),
+  actor TEXT, -- who performed the action (system / admin / user)
+  meta TEXT,  -- optional JSON blob (stored as TEXT)
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_voucher_audit_code ON voucher_audit(code);
+CREATE INDEX IF NOT EXISTS idx_voucher_audit_event ON voucher_audit(event);

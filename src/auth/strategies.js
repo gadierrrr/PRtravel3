@@ -10,7 +10,9 @@ function localStrategy() {
 			if (!user || !user.password_hash) {
 				return done(null, false, { message: 'Invalid credentials' });
 			}
-			const ok = await bcrypt.compare(password, user.password_hash);
+			// Some legacy/admin resets may have stored hash as BLOB (Buffer) via hex insert; bcryptjs expects a string
+			const storedHash = Buffer.isBuffer(user.password_hash) ? user.password_hash.toString() : user.password_hash;
+			const ok = await bcrypt.compare(password, storedHash);
 			if (!ok) return done(null, false, { message: 'Invalid credentials' });
 			if (!user.is_active) return done(null, false, { message: 'Account inactive' });
 			return done(null, { id: user.id, email: user.email, name: user.name, role: user.role });

@@ -24,11 +24,29 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
+// Global CSRF token injector (after body parsers, before routes) - safe no-op if csurf not on route
+app.use((req, res, next) => {
+  if (req.csrfToken) {
+    try { res.locals.csrfToken = req.csrfToken(); } catch { /* ignore */ }
+  }
+  if (typeof res.locals.csrfToken === 'undefined') res.locals.csrfToken = '';
+  next();
+});
+
 // Template locals defaults
 app.use((req, res, next) => {
   res.locals.currentCategory = null;
   res.locals.user = null; // will be populated after auth init
-  res.locals.STRIPE_ENABLED = process.env.STRIPE_ENABLED === 'true';
+  // Stripe enabled only if flag true AND required keys present
+  const stripeFlag = process.env.STRIPE_ENABLED === 'true';
+  const stripeKeysPresent = !!(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET);
+  res.locals.STRIPE_ENABLED = stripeFlag && stripeKeysPresent;
+  if (stripeFlag && !stripeKeysPresent) {
+    console.warn('[config] STRIPE_ENABLED=true but missing STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET -> disabling at runtime');
+  }
+  // Mail flags
+  res.locals.MAIL_ENABLED = process.env.MAIL_ENABLED === 'true' && !!process.env.SMTP_URL;
+  res.locals.MAIL_FROM = process.env.MAIL_FROM || 'PRTD <no-reply@example.com>';
   // UI refresh feature flag: default ON in dev unless explicitly disabled; prod requires UI_REFRESH=1
   const envFlag = process.env.UI_REFRESH === '1';
   const isDev = process.env.NODE_ENV !== 'production';
@@ -55,12 +73,18 @@ initAuth(app);
 // Populate user in templates after auth
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
-  res.locals.STRIPE_ENABLED = process.env.STRIPE_ENABLED === 'true';
+  const stripeFlag = process.env.STRIPE_ENABLED === 'true';
+  const stripeKeysPresent = !!(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET);
+  res.locals.STRIPE_ENABLED = stripeFlag && stripeKeysPresent;
+  res.locals.MAIL_ENABLED = process.env.MAIL_ENABLED === 'true' && !!process.env.SMTP_URL;
+  res.locals.MAIL_FROM = process.env.MAIL_FROM || 'PRTD <no-reply@example.com>';
   // if csurf middleware already attached token use it; otherwise blank
-  if (req.csrfToken) {
+  if (req.csrfToken && !res.locals.csrfToken) {
     try { res.locals.csrfToken = req.csrfToken(); } catch { res.locals.csrfToken = ''; }
-  } else {
-    res.locals.csrfToken = '';
+  }
+  // Minimal no-store for authenticated HTML pages to avoid stale CSRF tokens
+  if (req.user && req.method === 'GET') {
+    res.setHeader('Cache-Control', 'no-store');
   }
   next();
 });
@@ -79,10 +103,17 @@ app.use('/', adminRoutes);
 app.use('/', checkoutRoutes);
 app.use('/', webhookRoutes);
 
+// Test-only error trigger route
+if (process.env.NODE_ENV === 'test') {
+  app.get('/__trigger_error', (req, res) => {
+    throw new Error('Test induced failure');
+  });
+}
+
 // 404 handler
 app.use((req, res, next) => {
   res.status(404);
-  res.render('home', { title: 'Not Found', deals: [], notFound: true });
+  res.render('errors/404', { title: 'Not Found' });
 });
 
 // Centralized error handler
@@ -90,7 +121,9 @@ app.use((err, req, res, next) => {
   console.error(err); // eslint-disable-line no-console
   const status = err.status || 500;
   res.status(status);
-  res.render('home', { title: 'Error', deals: [], error: err.message });
+  const isProd = process.env.NODE_ENV === 'production';
+  const debugInfo = !isProd ? (err.stack || err.message || 'Error') : null;
+  res.render('errors/500', { title: 'Server Error', status, debugInfo });
 });
 
 if (require.main === module) {

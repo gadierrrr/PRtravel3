@@ -1,0 +1,7 @@
+<h1>Server Error</h1>
+<p>Something went wrong processing your request. Please return home and try again.</p>
+<p style="font-size:0.85rem;color:#888">SERVER_ERROR_MARKER</p>
+<% if (typeof debugInfo !== 'undefined' && debugInfo) { %>
+<pre style="white-space:pre-wrap; font-size:.7rem; background:#222; color:#eee; padding:.5rem; border-radius:4px; max-height:200px; overflow:auto;"><%= debugInfo.split('\n').slice(0,6).join('\n') %></pre>
+<% } %>
+<p><a class="btn" href="/">Back to Home</a></p>

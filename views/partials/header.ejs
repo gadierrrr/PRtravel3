@@ -1,20 +1,43 @@
 <header class="site-header" role="banner">
   <div class="branding"><a href="/" style="color:#fff;text-decoration:none;"><span class="visually-hidden">Puerto Rico Travel Deals home</span><span aria-hidden="true">PRTD</span></a></div>
-  <nav class="nav-cats" aria-label="Primary">
-    <a href="/" class="<%= !currentCategory ? 'active' : '' %>">All</a>
-    <a href="/?category=hotel" class="<%= currentCategory==='hotel' ? 'active' : '' %>">Hotels</a>
-    <a href="/?category=restaurant" class="<%= currentCategory==='restaurant' ? 'active' : '' %>">Food</a>
-    <a href="/?category=experience" class="<%= currentCategory==='experience' ? 'active' : '' %>">Experiences</a>
-    <span class="spacer"></span>
+  <% if (!uiRefresh) { %>
+    <nav class="nav-cats" aria-label="Primary">
+      <a href="/" class="<%= !currentCategory ? 'active' : '' %>">All</a>
+      <a href="/?category=hotel" class="<%= currentCategory==='hotel' ? 'active' : '' %>">Hotels</a>
+      <a href="/?category=restaurant" class="<%= currentCategory==='restaurant' ? 'active' : '' %>">Food</a>
+      <a href="/?category=experience" class="<%= currentCategory==='experience' ? 'active' : '' %>">Experiences</a>
+      <span class="spacer"></span>
       <% if (user) { %>
         <a href="/account">Account</a>
-  <form method="post" action="/logout" class="inline-form" aria-label="Logout">
+  <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+        <form method="post" action="/logout" class="inline-form" aria-label="Logout">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button type="submit">Logout</button>
         </form>
+        <% } else { %>
+          <span style="font-size:.75rem;opacity:.8;">Refresh page to logout</span>
+        <% } %>
       <% } else { %>
         <a href="/login">Login</a>
         <a href="/signup" class="cta">Sign Up</a>
       <% } %>
-  </nav>
+    </nav>
+  <% } else { %>
+    <div class="auth-links" aria-label="Account">
+      <% if (user) { %>
+        <a href="/account">Account</a>
+  <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+        <form method="post" action="/logout" class="inline-form" aria-label="Logout">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit">Logout</button>
+        </form>
+        <% } else { %>
+          <span style="font-size:.75rem;opacity:.8;">Refresh page to logout</span>
+        <% } %>
+      <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/signup" class="cta">Sign Up</a>
+      <% } %>
+    </div>
+  <% } %>
 </header>
