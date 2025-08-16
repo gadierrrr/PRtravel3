@@ -2,17 +2,34 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
-const dbFile = path.join(__dirname, '..', 'db', 'data.sqlite');
+const fs = require('fs');
+const dbDir = path.join(__dirname, '..', 'db');
+const dbFile = path.join(dbDir, 'data.sqlite');
 const connection = new sqlite3.Database(dbFile, (err) => {
   if (err) {
     // eslint-disable-next-line no-console
     console.error('SQLite connection error:', err.message);
   } else {
-    // Enforce foreign key constraints for every connection
     connection.run('PRAGMA foreign_keys = ON;', (e) => {
       if (e) {
         // eslint-disable-next-line no-console
         console.error('Failed to enable foreign_keys pragma:', e.message);
+      } else if (process.env.NODE_ENV !== 'production') {
+        // Fetch status then log
+        connection.get('PRAGMA foreign_keys;', (e2, row) => {
+          const fkStatus = row && row.foreign_keys;
+          // Detect stray .sqlite files (besides sessions.sqlite & data.sqlite)
+          let extraSqliteWarning = '';
+          try {
+            const files = fs.readdirSync(dbDir).filter(f => f.endsWith('.sqlite'));
+            const extras = files.filter(f => !['data.sqlite','sessions.sqlite'].includes(f));
+            if (extras.length > 0) {
+              extraSqliteWarning = ' (WARNING: Multiple .sqlite files found; using data.sqlite)';
+            }
+          } catch {/* ignore */}
+          // eslint-disable-next-line no-console
+            console.log(`DB connected: ${dbFile} • foreign_keys=${fkStatus}${extraSqliteWarning}`);
+        });
       }
     });
   }

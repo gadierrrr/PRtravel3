@@ -2,6 +2,8 @@
 
 End-to-end prototype for a Puerto Rico travel deals marketplace focused on discoverability of curated Puerto Rico travel & experience deals, with admin curation, optional payment capture, and image management.
 
+Runtime DB: `data.sqlite`. Dev startup logs show the absolute DB path and foreign key (FK) status (`foreign_keys=1`).
+
 ## Tech Stack
 Node 18+ (ES modules not required, CommonJS), Express 4, EJS + express-ejs-layouts, SQLite (file-based) with light migration layer, Passport (Local + Google OAuth 2.0), connect-sqlite3 session store, CSRF protection, Stripe Checkout (feature flag), Multer for image uploads, single CSS file (design tokens + responsive grid), minimal dependency smoke tests.
 
