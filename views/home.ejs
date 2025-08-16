@@ -96,6 +96,7 @@
             <% } %>
           </div>
           <a class="btn-cta-orange" href="/deal/<%= encodeURIComponent(d.slug) %>">View deal</a>
+          <a href="#" class="save-link" style="display:inline-block;">Save</a>
           <% if (d.ends_at) { %><p class="time-left" data-ends="<%= d.ends_at %>"></p><% } %>
         </div>
       </article>
