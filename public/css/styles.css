@@ -303,3 +303,21 @@ body.theme-refresh { background: var(--bg-cream); font-feature-settings: "liga" 
 .theme-refresh .deal-card-v2 .save-link { font-size:.6rem; margin-left:.7rem; text-decoration:underline; color:var(--ink-muted); }
 .theme-refresh .deal-card-v2 .save-link:hover { color:var(--price-now); }
 @media (min-width:1500px){ .theme-refresh .deal-grid { grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); } }
+
+/* Deal Detail Refresh */
+.theme-refresh .deal-detail { background:var(--surface-card); border-radius:var(--r-card); box-shadow:var(--shadow-card); padding:2.2rem 2.4rem 2.6rem; max-width:1180px; }
+.theme-refresh .deal-detail .hero-img { border-radius:var(--r-card); box-shadow:0 4px 16px rgba(0,0,0,0.08); margin:1.2rem 0 1.6rem; aspect-ratio: 16 / 7; object-fit:cover; }
+.theme-refresh .deal-detail h1 { font-size:2.1rem; line-height:1.15; margin:0; color:var(--ink); }
+.theme-refresh .deal-detail .teaser { font-size:.95rem; color:var(--ink-muted); margin:.75rem 0 1.1rem; line-height:1.45; }
+.theme-refresh .deal-detail .dd-layout { display:flex; flex-direction:column; gap:1.8rem; }
+@media (min-width:769px){ .theme-refresh .deal-detail .dd-layout { flex-direction:row; align-items:flex-start; } .theme-refresh .deal-detail .dd-main { flex:1.4; } .theme-refresh .deal-detail .dd-side { flex:1; max-width:380px; } }
+.theme-refresh .deal-detail .price-panel { background:var(--chip-bg); border-radius:16px; padding:1.1rem 1.25rem 1.3rem; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+.theme-refresh .deal-detail .price-panel .was { display:block; font-size:.75rem; text-decoration:line-through; color:var(--price-was); margin:0 0 .35rem; }
+.theme-refresh .deal-detail .price-panel .now { font-size:1.55rem; font-weight:700; color:var(--price-now); }
+.theme-refresh .deal-detail .price-panel .pct { background:var(--badge-bg); color:var(--badge-ink); padding:.25rem .55rem; border-radius:999px; font-size:.6rem; letter-spacing:.5px; font-weight:600; margin-left:.6rem; }
+.theme-refresh .deal-detail .price-panel .cta { margin-top:1rem; display:inline-block; }
+.theme-refresh .deal-detail .meta { font-size:.65rem; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-muted); margin-top:1rem; }
+.theme-refresh .deal-detail .tabs { display:flex; gap:.55rem; flex-wrap:wrap; margin:1.6rem 0 1rem; }
+.theme-refresh .deal-detail .tabs .chip { font-size:.7rem; padding:.5rem .9rem; }
+.theme-refresh .deal-detail .section { margin:1rem 0 1.6rem; }
+.theme-refresh .deal-detail .section h2 { font-size:1.05rem; margin:0 0 .55rem; }

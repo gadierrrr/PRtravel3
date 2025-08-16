@@ -3,48 +3,64 @@
 	<p><a href="/">Return to deals</a></p>
 <% } else { %>
 	<article class="deal-detail">
-		<h1><%= deal.title %></h1>
-		<img class="hero-img" src="<%= deal.image_url || '/img/placeholder.jpg' %>" alt="<%= deal.title %>" width="1200" height="630">
-		<div class="price-block">
-			<% if (deal.list_price_cents && deal.from_price_cents && deal.list_price_cents > deal.from_price_cents) { %>
-				<p class="list-price">$<%= (deal.list_price_cents/100).toFixed(2) %></p>
-			<% } %>
-			<% if (deal.from_price_cents != null) { %>
-				<p class="price-highlight">$<%= (deal.from_price_cents/100).toFixed(2) %> <% if (deal.discount_percent) { %><span class="discount">SAVE <%= deal.discount_percent %>%</span><% } %></p>
-			<% } %>
+		<div class="dd-layout">
+			<div class="dd-main">
+				<h1><%= deal.title %></h1>
+				<img class="hero-img" src="<%= deal.image_url || '/img/placeholder.jpg' %>" alt="<%= deal.title %>" width="1200" height="630">
+				<% if (deal.teaser) { %><p class="teaser"><%= deal.teaser %></p><% } %>
+				<div class="tabs" role="tablist" aria-label="Deal sections">
+					<span class="chip active" role="tab" aria-selected="true">Overview</span>
+					<span class="chip" role="tab" aria-disabled="true">Included</span>
+					<span class="chip" role="tab" aria-disabled="true">Location</span>
+				</div>
+				<div class="section">
+					<% if (deal.merchant_name) { %><p class="merchant">by <strong><%= deal.merchant_name %></strong></p><% } %>
+					<% if (deal.address_text || deal.city) { %><p class="address"><%= deal.address_text || '' %> <%= deal.city || '' %> <%= deal.state || '' %></p><% } %>
+					<% if (deal.rating_avg) { %><p class="rating">⭐ <%= Number(deal.rating_avg).toFixed(1) %> <span class="rcount">(<%= deal.rating_count || 0 %>)</span></p><% } %>
+					<p class="meta">Category: <%= deal.category %> <% if (deal.time_left_days) { %> • <span class="time-left"><%= deal.time_left_days %> day<%= deal.time_left_days!==1?'s':'' %> left</span><% } %></p>
+					<% if (deal.promo_code) { %><p class="promo">Use code <strong><%= deal.promo_code %></strong> <%= deal.promo_note || '' %></p><% } else if (deal.promo_note) { %><p class="promo"><%= deal.promo_note %></p><% } %>
+					<% if (deal.reviews_url) { %><p><a rel="noopener noreferrer" target="_blank" href="<%= deal.reviews_url %>">Read reviews ↗</a></p><% } %>
+				</div>
+			</div>
+			<div class="dd-side">
+				<div class="price-panel" aria-label="Price information">
+					<% if (deal.list_price_cents && deal.from_price_cents && deal.list_price_cents > deal.from_price_cents) { %>
+						<span class="was">$<%= (deal.list_price_cents/100).toFixed(2) %></span>
+					<% } %>
+					<% if (deal.from_price_cents != null) { %>
+						<span class="now">$<%= (deal.from_price_cents/100).toFixed(2) %></span>
+						<% if (deal.discount_percent) { %><span class="pct">-<%= deal.discount_percent %>%</span><% } %>
+					<% } %>
+					<div class="cta">
+						<% if (STRIPE_ENABLED && user && deal.from_price_cents != null) { %>
+						<form id="buyForm" data-option-id="<%= deal.main_option_id || '' %>">
+							<label style="font-size:.65rem; text-transform:uppercase; letter-spacing:.5px; display:block; margin:0 0 .4rem;">Qty <input type="number" name="qty" value="1" min="1" style="width:60px"></label>
+							<button type="submit" class="btn-cta-orange" style="border:none;">Buy Now</button>
+						</form>
+						<script>
+						(async function(){
+						 const form=document.getElementById('buyForm');
+						 if(form){
+						 form.addEventListener('submit', async (e)=>{
+						  e.preventDefault();
+						  const qty=form.qty.value||1;
+						  const optionId = parseInt(form.getAttribute('data-option-id'),10);
+						  if(!optionId){ alert('No purchasable option.'); return; }
+						  const res=await fetch('/checkout/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({option_id:optionId, qty})});
+						  const data=await res.json();
+						  if(data && data.url){ window.location = data.url; }
+						 });
+						 }
+						})();
+						</script>
+						<% } else { %>
+							<% if (!user) { %><p style="font-size:.7rem; margin:.6rem 0 0;"><em>Login to purchase.</em></p><% } else if (!STRIPE_ENABLED) { %><p style="font-size:.7rem; margin:.6rem 0 0;"><em>Purchasing disabled.</em></p><% } %>
+						<% } %>
+					</div>
+				</div>
+			</div>
 		</div>
 		<% if (deal.badge_text) { %><p class="badge big"><%= deal.badge_text %></p><% } %>
-		<% if (deal.merchant_name) { %><p class="merchant">by <strong><%= deal.merchant_name %></strong></p><% } %>
-		<% if (deal.address_text || deal.city) { %><p class="address"><%= deal.address_text || '' %> <%= deal.city || '' %> <%= deal.state || '' %></p><% } %>
-		<% if (deal.rating_avg) { %><p class="rating">⭐ <%= Number(deal.rating_avg).toFixed(1) %> <span class="rcount">(<%= deal.rating_count || 0 %>)</span></p><% } %>
-		<% if (deal.teaser) { %><p class="teaser"><%= deal.teaser %></p><% } %>
-		<p class="meta">Category: <%= deal.category %> <% if (deal.time_left_days) { %> • <span class="time-left"><%= deal.time_left_days %> day<%= deal.time_left_days!==1?'s':'' %> left</span><% } %></p>
-		<% if (deal.promo_code) { %><p class="promo">Use code <strong><%= deal.promo_code %></strong> <%= deal.promo_note || '' %></p><% } else if (deal.promo_note) { %><p class="promo"><%= deal.promo_note %></p><% } %>
-		<% if (deal.reviews_url) { %><p><a rel="noopener noreferrer" target="_blank" href="<%= deal.reviews_url %>">Read reviews ↗</a></p><% } %>
-		<% if (STRIPE_ENABLED && user && deal.from_price_cents != null) { %>
-		<div style="margin:1rem 0;">
-			<form id="buyForm" data-option-id="<%= deal.main_option_id || '' %>">
-				<label>Qty <input type="number" name="qty" value="1" min="1" style="width:60px"></label>
-				<button type="submit" class="btn">Buy</button>
-			</form>
-			<script>
-			(async function(){
-			 const form=document.getElementById('buyForm');
-			 form.addEventListener('submit', async (e)=>{
-			  e.preventDefault();
-			  const qty=form.qty.value||1;
-			  // naive option fetch embedded server-side
-			  const optionId = parseInt(form.getAttribute('data-option-id'),10);
-			  if(!optionId){ alert('No purchasable option.'); return; }
-			  const res=await fetch('/checkout/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({option_id:optionId, qty})});
-			  const data=await res.json();
-			  if(data && data.url){ window.location = data.url; }
-			 });
-			})();
-			</script>
-		<% } else { %>
-			<% if (!user) { %><p><em>Login to purchase.</em></p><% } else if (!STRIPE_ENABLED) { %><p><em>Purchasing disabled.</em></p><% } %>
-		<% } %>
 		<p style="margin-top:2rem"><a href="/">Back to all deals</a></p>
 	</article>
 <% } %>
