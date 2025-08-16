@@ -3,7 +3,20 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
 const dbFile = path.join(__dirname, '..', 'db', 'data.sqlite');
-const connection = new sqlite3.Database(dbFile);
+const connection = new sqlite3.Database(dbFile, (err) => {
+  if (err) {
+    // eslint-disable-next-line no-console
+    console.error('SQLite connection error:', err.message);
+  } else {
+    // Enforce foreign key constraints for every connection
+    connection.run('PRAGMA foreign_keys = ON;', (e) => {
+      if (e) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to enable foreign_keys pragma:', e.message);
+      }
+    });
+  }
+});
 
 function all(sql, params = []) {
   return new Promise((resolve, reject) => {
