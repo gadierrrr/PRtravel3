@@ -164,7 +164,7 @@ table thead th:last-child { border-top-right-radius:var(--radius-sm); }
 
 /* Base: single column */
 .grid { grid-template-columns:repeat(1,minmax(0,1fr)); }
-.theme-refresh .deal-grid { grid-template-columns:repeat(1,minmax(0,1fr)); }
+.theme-refresh .deal-grid { grid-template-columns:repeat(1,minmax(0,1fr)); /* merged into canonical deal-grid block near bottom (UI refresh) */ }
 
 @media (min-width:421px){
   .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -321,3 +321,19 @@ body.theme-refresh { background: var(--bg-cream); font-feature-settings: "liga" 
 .theme-refresh .deal-detail .tabs .chip { font-size:.7rem; padding:.5rem .9rem; }
 .theme-refresh .deal-detail .section { margin:1rem 0 1.6rem; }
 .theme-refresh .deal-detail .section h2 { font-size:1.05rem; margin:0 0 .55rem; }
+
+/* PRUNE CANDIDATES AFTER PARITY
+  (Do not delete now; slated for follow-up cleanup PR)
+  - .grid > .card legacy card styles (once legacy theme retired)
+  - .promo (if not used in refreshed designs or moved to component)
+  - .pill / .pill.off (legacy pills superseded by .chip)
+  - .spotlight / .sticker (if not part of final design system)
+  - .emoji-pill (if replaced by structured iconography)
+  - .price-now / .price-was (legacy spotlight price styles; superseded by price-row-v2 tokens)
+  - .deal-detail legacy block (.deal-detail before theme-refresh overrides)
+  - Redundant color tokens: --color-ink-soft (if consolidated into --ink-muted), --color-surface (if replaced by --surface-card), --color-accent* (if cta tokens fully adopted)
+  - .nav-cats (legacy header categories replaced by hero chips)
+  - .time-left legacy styling (if unified under refresh scope)
+  - .badge.big (if not in final component inventory)
+  - @media (min-width: 768px) hero legacy adjustments (post legacy removal)
+*/
